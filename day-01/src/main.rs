@@ -34,7 +34,7 @@ fn get_elf_with_most_calorie(file_content: String) -> Option<ElfData> {
 }
 
 pub fn main() {
-  let file_contents = fs::read_to_string("./res/task1.txt");
+  let file_contents = fs::read_to_string("./res/input.txt");
   match file_contents {
     Ok(file_content) => {
       match get_elf_with_most_calorie(file_content) {

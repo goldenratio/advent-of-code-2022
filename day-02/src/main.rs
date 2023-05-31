@@ -14,7 +14,7 @@ enum GameAction {
   Scissors
 }
 
-#[derive(Debug)]
+#[derive(Debug, Copy, Clone)]
 struct GamePlayData {
   elf_action: GameAction,
   player_action: GameAction
@@ -24,7 +24,7 @@ fn main() {
   let file_contents = fs::read_to_string("./res/input.txt");
   match file_contents {
     Ok(_file_content) => {
-      println!("{:?}", calculate_score_for_round([
+      let data = [
         GamePlayData {
           player_action: GameAction::Rock,
           elf_action: GameAction::Paper
@@ -37,7 +37,8 @@ fn main() {
           player_action: GameAction::Scissors,
           elf_action: GameAction::Scissors
         }
-      ]));
+      ];
+      println!("{:?}", calculate_score_for_round(data));
     }
     Err(_) => {
       panic!("cannot read file!");
@@ -47,68 +48,44 @@ fn main() {
 
 fn calculate_score_for_round(data: [GamePlayData; 3]) -> u32 {
   let player_selected_score = data
-    .map(|x| get_selection_sore(x.player_action))
+    .map(|x| get_player_action_score(&x.player_action))
     .iter()
     .sum::<u32>();
 
   let game_play_score = data
-    .map(|x| get_game_play_score(x))
+    .map(|x| get_game_play_score(&x))
     .iter()
     .sum::<u32>();
 
   return player_selected_score + game_play_score;
 }
 
-fn get_game_play_result(data: GamePlayData) -> GamePlayResult {
-  if data.player_action == GameAction::Rock {
-    if data.elf_action == GameAction::Rock {
-      return GamePlayResult::Draw;
-    }
-    if data.elf_action == GameAction::Paper {
-      return GamePlayResult::Lost;
-    }
-    if data.elf_action == GameAction::Scissors {
-      return GamePlayResult::Won;
-    }
+fn get_game_play_result(player_action: GameAction, elf_action: GameAction) -> GamePlayResult {
+  match (player_action, elf_action) {
+    (GameAction::Rock, GameAction::Rock) => GamePlayResult::Draw,
+    (GameAction::Rock, GameAction::Paper) => GamePlayResult::Lost,
+    (GameAction::Rock, GameAction::Scissors) => GamePlayResult::Won,
+    (GameAction::Paper, GameAction::Rock) => GamePlayResult::Won,
+    (GameAction::Paper, GameAction::Paper) => GamePlayResult::Draw,
+    (GameAction::Paper, GameAction::Scissors) => GamePlayResult::Lost,
+    (GameAction::Scissors, GameAction::Rock) => GamePlayResult::Lost,
+    (GameAction::Scissors, GameAction::Paper) => GamePlayResult::Won,
+    (GameAction::Scissors, GameAction::Scissors) => GamePlayResult::Draw
   }
-
-  if data.player_action == GameAction::Paper {
-    if data.elf_action == GameAction::Rock {
-      return GamePlayResult::Won;
-    }
-    if data.elf_action == GameAction::Paper {
-      return GamePlayResult::Draw;
-    }
-    if data.elf_action == GameAction::Scissors {
-      return GamePlayResult::Lost;
-    }
-  }
-  if data.player_action == GameAction::Scissors {
-    if data.elf_action == GameAction::Rock {
-      return GamePlayResult::Lost;
-    }
-    if data.elf_action == GameAction::Paper {
-      return GamePlayResult::Won;
-    }
-    if data.elf_action == GameAction::Scissors {
-      return GamePlayResult::Draw;
-    }
-  }
-  return GamePlayResult::Draw;
 }
 
-fn get_selection_sore(selection_option: GameAction) -> u32 {
-  if selection_option == GameAction::Rock {
+fn get_player_action_score(action: &GameAction) -> u32 {
+  if action == &GameAction::Rock {
     return 1;
   }
-  if selection_option == GameAction::Paper {
+  if action == &GameAction::Paper {
     return 2;
   }
   return 3;
 }
 
-fn get_game_play_score(data: GamePlayData) -> u32 {
-  let result = get_game_play_result(data);
+fn get_game_play_score(data: &GamePlayData) -> u32 {
+  let result = get_game_play_result(data.player_action, data.elf_action);
   if result == GamePlayResult::Draw {
     return 3;
   }

@@ -7,7 +7,7 @@ struct ElfData {
   total_calories: u32
 }
 
-fn get_elves_with_most_calorie(file_content: String) -> Option<ElfData> {
+fn get_elf_with_most_calorie(file_content: String) -> Option<ElfData> {
   let sum_of_calories_list: Vec<u32> = file_content
     .split("\n\n")
     .map(|e| {
@@ -37,7 +37,7 @@ pub fn main() {
   let file_contents = fs::read_to_string("./res/task1.txt");
   match file_contents {
     Ok(file_content) => {
-      match get_elves_with_most_calorie(file_content) {
+      match get_elf_with_most_calorie(file_content) {
         None => {}
         Some(data) => {
           println!("Elf number {:?} is carrying most calories ({:?})", data.elf_index + 1, data.total_calories);

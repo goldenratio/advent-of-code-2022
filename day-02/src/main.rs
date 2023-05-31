@@ -1,6 +1,13 @@
 use std::fs;
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone, Copy)]
+enum GamePlayResult {
+  Won,
+  Lost,
+  Draw
+}
+
+#[derive(Debug, PartialEq, Clone, Copy)]
 enum GameAction {
   Rock,
   Paper,
@@ -11,13 +18,6 @@ enum GameAction {
 struct GamePlayData {
   elf_action: GameAction,
   player_action: GameAction
-}
-
-#[derive(Debug, PartialEq)]
-enum GamePlayResult {
-  Won,
-  Lost,
-  Draw
 }
 
 fn main() {
@@ -59,16 +59,6 @@ fn calculate_score_for_round(data: [GamePlayData; 3]) -> u32 {
   return player_selected_score + game_play_score;
 }
 
-fn get_selection_sore(selection_option: GameAction) -> u32 {
-  if selection_option == GameAction::Rock {
-    return 1;
-  }
-  if selection_option == GameAction::Paper {
-    return 2;
-  }
-  return 3;
-}
-
 fn get_game_play_result(data: GamePlayData) -> GamePlayResult {
   if data.player_action == GameAction::Rock {
     if data.elf_action == GameAction::Rock {
@@ -105,6 +95,16 @@ fn get_game_play_result(data: GamePlayData) -> GamePlayResult {
     }
   }
   return GamePlayResult::Draw;
+}
+
+fn get_selection_sore(selection_option: GameAction) -> u32 {
+  if selection_option == GameAction::Rock {
+    return 1;
+  }
+  if selection_option == GameAction::Paper {
+    return 2;
+  }
+  return 3;
 }
 
 fn get_game_play_score(data: GamePlayData) -> u32 {

@@ -23,27 +23,38 @@ struct GamePlayData {
 fn main() {
   let file_contents = fs::read_to_string("./res/input.txt");
   match file_contents {
-    Ok(_file_content) => {
-      let data = [
-        GamePlayData {
-          player_action: GameAction::Rock,
-          elf_action: GameAction::Paper
-        },
-        GamePlayData {
-          player_action: GameAction::Paper,
-          elf_action: GameAction::Rock
-        },
-        GamePlayData {
-          player_action: GameAction::Scissors,
-          elf_action: GameAction::Scissors
-        }
-      ];
-      println!("{:?}", calculate_score_for_round(data));
+    Ok(file_content) => {
+      let total_score = convert_file_content_to_game_play_data(file_content)
+        .iter()
+        .map(|data| calculate_score_for_round(*data))
+        .sum::<u32>();
+
+      println!("total score: {:?}", total_score);
     }
     Err(_) => {
       panic!("cannot read file!");
     }
   }
+}
+
+// TODO
+fn convert_file_content_to_game_play_data(_file_content: String) -> Vec<[GamePlayData; 3]> {
+  let mut data: Vec<[GamePlayData; 3]> = Vec::new();
+  data.push([
+    GamePlayData {
+      player_action: GameAction::Rock,
+      elf_action: GameAction::Paper
+    },
+    GamePlayData {
+      player_action: GameAction::Paper,
+      elf_action: GameAction::Rock
+    },
+    GamePlayData {
+      player_action: GameAction::Scissors,
+      elf_action: GameAction::Scissors
+    }
+  ]);
+  return data;
 }
 
 fn calculate_score_for_round(data: [GamePlayData; 3]) -> u32 {
